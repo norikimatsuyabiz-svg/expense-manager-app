@@ -9,166 +9,175 @@
 </head>
 <body class="bg-gray-50 text-gray-800" style="font-family: '游ゴシック', 'Yu Gothic', '游ゴシック体', sans-serif;">
 
-  <div class="flex h-screen overflow-hidden">
+  <div class="flex flex-col h-screen overflow-hidden">
 
-    <!-- 左ペイン -->
-    <aside id="left-pane" class="flex flex-col bg-white border-r border-gray-200 overflow-hidden" style="width: 380px; min-width: 380px;">
+    <!-- ヘッダー -->
+    <header class="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shadow-sm flex-shrink-0">
+      <h1 class="text-base font-semibold text-gray-800">💼 経費管理</h1>
+      <button id="btn-stats" class="border border-gray-300 text-gray-700 rounded-lg px-4 py-1.5 text-sm hover:bg-gray-50">
+        集計を見る
+      </button>
+    </header>
 
-      <!-- サマリカード -->
-      <div class="p-4 border-b border-gray-100">
-        <div class="rounded-lg bg-gray-50 border border-gray-200 p-4 shadow-sm">
-          <div class="text-xs text-gray-500 mb-1">合計金額</div>
-          <div id="summary-total" class="text-2xl font-bold text-gray-800">¥0</div>
-          <div class="flex gap-4 mt-2">
-            <div>
-              <span class="text-xs text-gray-500">申請中</span>
-              <span id="summary-pending" class="ml-1 text-sm font-semibold text-amber-600">0件</span>
+    <!-- 2ペインエリア -->
+    <div class="flex flex-1 overflow-hidden">
+
+      <!-- 左ペイン -->
+      <aside class="flex flex-col bg-white border-r border-gray-200 overflow-hidden flex-shrink-0" style="width: 380px;">
+
+        <!-- サマリカード -->
+        <div class="p-4 border-b border-gray-100">
+          <div class="rounded-lg bg-gray-50 border border-gray-200 p-4 shadow-sm">
+            <div class="text-xs text-gray-500 mb-1">合計金額</div>
+            <div id="summary-total" class="text-2xl font-bold text-gray-800">¥0</div>
+            <div class="flex gap-4 mt-2">
+              <div>
+                <span class="text-xs text-gray-500">申請中</span>
+                <span id="summary-pending" class="ml-1 text-sm font-semibold text-amber-600">0件</span>
+              </div>
+              <div>
+                <span class="text-xs text-gray-500">精算済</span>
+                <span id="summary-settled" class="ml-1 text-sm font-semibold text-green-600">0件</span>
+              </div>
             </div>
-            <div>
-              <span class="text-xs text-gray-500">精算済</span>
-              <span id="summary-settled" class="ml-1 text-sm font-semibold text-green-600">0件</span>
+          </div>
+        </div>
+
+        <!-- 検索・新規登録 -->
+        <div class="flex gap-2 px-4 py-3 border-b border-gray-100">
+          <input
+            id="search-box"
+            type="text"
+            placeholder="カテゴリ・メモで検索…"
+            class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+          />
+          <button id="btn-new" class="text-white rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap btn-primary">
+            ＋ 新規登録
+          </button>
+        </div>
+
+        <!-- 経費カードリスト -->
+        <div id="expense-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll">
+          <p class="text-sm text-gray-400 text-center py-8">読み込み中…</p>
+        </div>
+
+      </aside>
+
+      <!-- 右ペイン -->
+      <main class="flex-1 overflow-y-auto custom-scroll">
+
+        <!-- 空状態 -->
+        <div id="pane-empty" class="flex flex-col items-center justify-center h-full text-center px-8">
+          <div class="text-5xl mb-4">🧾</div>
+          <p class="text-gray-400 text-sm">経費を選択するか、新規登録してください</p>
+        </div>
+
+        <!-- 詳細 -->
+        <div id="pane-detail" class="hidden p-8 max-w-xl">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-semibold text-gray-800">経費詳細</h2>
+            <div id="detail-status-badge"></div>
+          </div>
+
+          <div class="bg-white rounded-lg border border-gray-200 shadow-sm divide-y divide-gray-100">
+            <div class="flex px-5 py-4">
+              <span class="text-sm text-gray-500 w-28">日付</span>
+              <span id="detail-date" class="text-sm text-gray-800 font-medium"></span>
+            </div>
+            <div class="flex px-5 py-4">
+              <span class="text-sm text-gray-500 w-28">カテゴリ</span>
+              <span id="detail-category" class="text-sm text-gray-800"></span>
+            </div>
+            <div class="flex px-5 py-4">
+              <span class="text-sm text-gray-500 w-28">金額</span>
+              <span id="detail-amount" class="text-sm text-gray-800 font-semibold"></span>
+            </div>
+            <div class="flex px-5 py-4">
+              <span class="text-sm text-gray-500 w-28">メモ</span>
+              <span id="detail-memo" class="text-sm text-gray-800 whitespace-pre-wrap flex-1"></span>
+            </div>
+            <div class="flex px-5 py-4">
+              <span class="text-sm text-gray-500 w-28">登録日時</span>
+              <span id="detail-created-at" class="text-sm text-gray-400"></span>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- 検索・新規登録 -->
-      <div class="flex gap-2 px-4 py-3 border-b border-gray-100">
-        <input
-          id="search-box"
-          type="text"
-          placeholder="カテゴリ・メモで検索…"
-          class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-        />
-        <button
-          id="btn-new"
-          class="text-white rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap btn-primary"
-        >
-          ＋ 新規登録
-        </button>
-      </div>
-
-      <!-- 経費カードリスト -->
-      <div id="expense-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll">
-        <!-- カードはapp.jsで描画 -->
-      </div>
-
-    </aside>
-
-    <!-- 右ペイン -->
-    <main class="flex-1 overflow-y-auto custom-scroll">
-
-      <!-- 空状態 -->
-      <div id="pane-empty" class="flex flex-col items-center justify-center h-full text-center px-8">
-        <div class="text-5xl mb-4">🧾</div>
-        <p class="text-gray-400 text-sm">経費を選択するか、新規登録してください</p>
-      </div>
-
-      <!-- 詳細 -->
-      <div id="pane-detail" class="hidden p-8 max-w-xl">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-gray-800">経費詳細</h2>
-          <div id="detail-status-badge"></div>
-        </div>
-
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm divide-y divide-gray-100">
-          <div class="flex px-5 py-4">
-            <span class="text-sm text-gray-500 w-28">日付</span>
-            <span id="detail-date" class="text-sm text-gray-800 font-medium"></span>
-          </div>
-          <div class="flex px-5 py-4">
-            <span class="text-sm text-gray-500 w-28">カテゴリ</span>
-            <span id="detail-category" class="text-sm text-gray-800"></span>
-          </div>
-          <div class="flex px-5 py-4">
-            <span class="text-sm text-gray-500 w-28">金額</span>
-            <span id="detail-amount" class="text-sm text-gray-800 font-semibold"></span>
-          </div>
-          <div class="flex px-5 py-4">
-            <span class="text-sm text-gray-500 w-28">メモ</span>
-            <span id="detail-memo" class="text-sm text-gray-800 whitespace-pre-wrap flex-1"></span>
-          </div>
-          <div class="flex px-5 py-4">
-            <span class="text-sm text-gray-500 w-28">登録日時</span>
-            <span id="detail-created-at" class="text-sm text-gray-400"></span>
+          <div class="flex flex-wrap gap-3 mt-6">
+            <button id="btn-toggle-status" class="border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm hover:bg-gray-50"></button>
+            <button id="btn-edit" class="border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm hover:bg-gray-50">編集</button>
+            <button id="btn-delete" class="text-red-600 border border-red-300 rounded-lg px-4 py-2 text-sm hover:bg-red-50">削除</button>
           </div>
         </div>
 
-        <!-- ボタン群 -->
-        <div class="flex flex-wrap gap-3 mt-6">
-          <button id="btn-toggle-status" class="border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm hover:bg-gray-50"></button>
-          <button id="btn-edit" class="border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm hover:bg-gray-50">編集</button>
-          <button id="btn-delete" class="text-red-600 border border-red-300 rounded-lg px-4 py-2 text-sm hover:bg-red-50">削除</button>
+        <!-- フォーム -->
+        <div id="pane-form" class="hidden p-8 max-w-xl">
+          <h2 id="form-title" class="text-lg font-semibold text-gray-800 mb-6">新規経費登録</h2>
+
+          <form id="expense-form" class="bg-white rounded-lg border border-gray-200 shadow-sm divide-y divide-gray-100" novalidate>
+            <input type="hidden" id="field-id" />
+
+            <div class="px-5 py-4">
+              <label class="block text-sm text-gray-500 mb-1" for="field-date">日付 <span class="text-red-500">*</span></label>
+              <input id="field-date" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300" />
+              <p id="err-date" class="text-xs text-red-500 mt-1 hidden">日付を入力してください</p>
+            </div>
+
+            <div class="px-5 py-4">
+              <label class="block text-sm text-gray-500 mb-1" for="field-category">カテゴリ <span class="text-red-500">*</span></label>
+              <select id="field-category" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                <option value="">選択してください</option>
+                <option value="交通費">交通費</option>
+                <option value="会議費">会議費</option>
+                <option value="接待費">接待費</option>
+                <option value="消耗品">消耗品</option>
+                <option value="通信費">通信費</option>
+                <option value="その他">その他</option>
+              </select>
+              <p id="err-category" class="text-xs text-red-500 mt-1 hidden">カテゴリを選択してください</p>
+            </div>
+
+            <div class="px-5 py-4">
+              <label class="block text-sm text-gray-500 mb-1" for="field-amount">金額（円） <span class="text-red-500">*</span></label>
+              <input id="field-amount" type="number" min="1" step="1" placeholder="例: 3200" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300" />
+              <p id="err-amount" class="text-xs text-red-500 mt-1 hidden">1円以上の金額を入力してください</p>
+            </div>
+
+            <div class="px-5 py-4">
+              <label class="block text-sm text-gray-500 mb-1" for="field-memo">メモ</label>
+              <textarea id="field-memo" rows="3" placeholder="用途・訪問先など（任意）" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none"></textarea>
+            </div>
+          </form>
+
+          <div class="flex gap-3 mt-6">
+            <button id="btn-save" class="text-white rounded-lg px-5 py-2 text-sm font-medium btn-primary">保存</button>
+            <button id="btn-cancel" class="border border-gray-300 text-gray-700 rounded-lg px-5 py-2 text-sm hover:bg-gray-50">キャンセル</button>
+          </div>
         </div>
-      </div>
 
-      <!-- フォーム -->
-      <div id="pane-form" class="hidden p-8 max-w-xl">
-        <h2 id="form-title" class="text-lg font-semibold text-gray-800 mb-6">新規経費登録</h2>
-
-        <form id="expense-form" class="bg-white rounded-lg border border-gray-200 shadow-sm divide-y divide-gray-100" novalidate>
-          <input type="hidden" id="field-id" />
-
-          <div class="px-5 py-4">
-            <label class="block text-sm text-gray-500 mb-1" for="field-date">日付 <span class="text-red-500">*</span></label>
-            <input
-              id="field-date"
-              type="date"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-            />
-            <p id="err-date" class="text-xs text-red-500 mt-1 hidden">日付を入力してください</p>
-          </div>
-
-          <div class="px-5 py-4">
-            <label class="block text-sm text-gray-500 mb-1" for="field-category">カテゴリ <span class="text-red-500">*</span></label>
-            <select
-              id="field-category"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-            >
-              <option value="">選択してください</option>
-              <option value="交通費">交通費</option>
-              <option value="会議費">会議費</option>
-              <option value="接待費">接待費</option>
-              <option value="消耗品">消耗品</option>
-              <option value="通信費">通信費</option>
-              <option value="その他">その他</option>
-            </select>
-            <p id="err-category" class="text-xs text-red-500 mt-1 hidden">カテゴリを選択してください</p>
-          </div>
-
-          <div class="px-5 py-4">
-            <label class="block text-sm text-gray-500 mb-1" for="field-amount">金額（円） <span class="text-red-500">*</span></label>
-            <input
-              id="field-amount"
-              type="number"
-              min="1"
-              step="1"
-              placeholder="例: 3200"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-            />
-            <p id="err-amount" class="text-xs text-red-500 mt-1 hidden">1円以上の金額を入力してください</p>
-          </div>
-
-          <div class="px-5 py-4">
-            <label class="block text-sm text-gray-500 mb-1" for="field-memo">メモ</label>
-            <textarea
-              id="field-memo"
-              rows="3"
-              placeholder="用途・訪問先など（任意）"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none"
-            ></textarea>
-          </div>
-        </form>
-
-        <div class="flex gap-3 mt-6">
-          <button id="btn-save" class="text-white rounded-lg px-5 py-2 text-sm font-medium btn-primary">保存</button>
-          <button id="btn-cancel" class="border border-gray-300 text-gray-700 rounded-lg px-5 py-2 text-sm hover:bg-gray-50">キャンセル</button>
-        </div>
-      </div>
-
-    </main>
+      </main>
+    </div>
   </div>
 
-  <script src="app.js"></script>
+  <!-- 集計モーダル -->
+  <div id="stats-modal-overlay" class="hidden fixed inset-0 flex items-center justify-center z-50 modal-overlay">
+    <div class="bg-white rounded-lg shadow-md w-[480px] p-6 relative">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-base font-semibold text-gray-800">集計</h2>
+        <button id="modal-close" class="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
+      </div>
+
+      <div id="modal-loading" class="text-sm text-gray-400 text-center py-8">読み込み中…</div>
+
+      <div id="modal-content" class="hidden">
+        <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">カテゴリ別合計</h3>
+        <div id="modal-category" class="mb-6 rounded-lg border border-gray-100 overflow-hidden"></div>
+
+        <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">ステータス別件数</h3>
+        <div id="modal-status" class="rounded-lg border border-gray-100 overflow-hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
 </body>
 </html>

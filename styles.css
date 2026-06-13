@@ -40,3 +40,8 @@
 .expense-card:hover {
   background-color: #f9fafb;
 }
+
+/* モーダルオーバーレイ */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
+}
