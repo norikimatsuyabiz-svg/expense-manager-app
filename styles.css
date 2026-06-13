@@ -1,0 +1,42 @@
+/* カスタムスクロールバー */
+.custom-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 99px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* アクセントカラーボタン */
+.btn-primary {
+  background-color: #c15f3c;
+  transition: background-color 0.15s;
+}
+.btn-primary:hover {
+  background-color: #a84f30;
+}
+.btn-primary:active {
+  background-color: #8f4028;
+}
+
+/* 選択中カード */
+.card-selected {
+  border-left: 3px solid #c15f3c !important;
+  background-color: #fdf4f0 !important;
+}
+
+/* カードホバー */
+.expense-card {
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.1s, border-color 0.1s;
+}
+.expense-card:hover {
+  background-color: #f9fafb;
+}
